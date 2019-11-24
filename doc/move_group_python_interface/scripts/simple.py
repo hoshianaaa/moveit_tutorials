@@ -22,6 +22,14 @@ def main():
 
     robot = moveit_commander.RobotCommander()
 
+    print "=" * 10, "Robot Groups:" 
+    #print robot.get_gropu_names()
+    print "=" * 10
+
+    print "=" * 10, "Robot state:" 
+    print robot.get_current_state()
+    print "=" * 10
+
     arm = moveit_commander.MoveGroupCommander("interaction_arm")
 
 
@@ -29,22 +37,23 @@ def main():
     arm.go()
     rospy.sleep(1)
 
-    arm.set_named_target("BeforePush")
+    arm.set_named_target("running")
     arm.go()
  
     arm_initial_pose = arm.get_current_pose().pose
-    print "=" * 10, " Printing initial pose: "
+    print "=" * 10, " Printing running pose: "
     print arm_initial_pose
 
-    arm_initial_pose.position.x = 0.5
-    arm_initial_pose.position.z = 1.28
-    
+    arm_initial_pose.position.x += 0.05
+    arm_initial_pose.position.z += 0.1
     arm.set_pose_target(arm_initial_pose)
     arm.go()
+    print "=" * 10, " Printing target pose: "
+    print arm_initial_pose
+
+
     rospy.sleep(1)
     arm.clear_pose_targets()
-
-    print arm.get_current_pose().pose
 
     arm.set_named_target("home")
     arm.go()
