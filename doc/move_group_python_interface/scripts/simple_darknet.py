@@ -6,6 +6,10 @@ import moveit_commander
 import geometry_msgs.msg
 import tf
 from geometry_msgs.msg import Quaternion
+from darknet_ros_msgs.msg import BoundingBoxes,BoundingBox
+
+ID_UP_ON = 1
+UP_BOTTUN_LOCK = 1
 
 class Vector3:
   def __init__(self, x, y, z):
@@ -17,18 +21,18 @@ def euler_to_quaternion(euler):
   q = tf.transformations.quaternion_from_euler(euler.x, euler.y,euler.z)
   return Quaternion(x=q[0], y=q[1], z=q[2], w=q[3])
 
+def bounding_boxes_callback(msg):
+  print("bounding box call back")
+  for i in range(len(msg.bounding_boxes)):
+    if msg.bounding_boxes[i].id is ID_UP_ON:
+      print("detect up_on bounding_box")
+      UP_BOTTUN_LOCK = 0
+
 def main():
     rospy.init_node("moveit_command_sender")
+    bounding_box_subscriber = rospy.Subscriber("/darknet_ros/bounding_boxes", BoundingBoxes, bounding_boxes_callback)
 
     robot = moveit_commander.RobotCommander()
-
-    print "=" * 10, "Robot Groups:" 
-    #print robot.get_gropu_names()
-    print "=" * 10
-
-    print "=" * 10, "Robot state:" 
-    print robot.get_current_state()
-    print "=" * 10
 
     arm = moveit_commander.MoveGroupCommander("interaction_arm")
 
@@ -36,32 +40,25 @@ def main():
     arm.set_named_target("home")
     arm.go()
     rospy.sleep(1)
+    print("home")
 
     arm.set_named_target("running")
     arm.go()
+    print("running")
  
-    
-    while 1:
+    while UP_BOTTUN_LOCK:
       arm.set_named_target("up_bottun_45")
       arm.go()
       print("push bottun")
       arm.set_named_target("running")
       arm.go()
       print("return running pose")
-   
-
-    arm_initial_pose.position.x += 0.01
-    arm.set_pose_target(arm_initial_pose)
-    arm.go()
-    print "=" * 10, " Printing x+0.01 pose: "
-    print arm_initial_pose
-
-
-    rospy.sleep(1)
-    arm.clear_pose_targets()
+      rospy.sleep(1)
+      arm.clear_pose_targets()
 
     arm.set_named_target("home")
     arm.go()
+    print("home")
     rospy.sleep(1)
 
 
