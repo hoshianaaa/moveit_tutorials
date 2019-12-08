@@ -9,7 +9,7 @@ import time
 
 robot = moveit_commander.RobotCommander()
 arm = moveit_commander.MoveGroupCommander("interaction_arm")
-motion_list = ["home", "running", "up_bottun_45", "up_bottun_45_2"]
+motion_list = ["home","up_bottun_45_1", "up_bottun_45_2", "up_bottun_45_3", "up_bottun_45_4", "up_bottun_45_5", "up_bottun_6", "up_bottun_7"]
 
 def handle_arm_motion(req):
 
