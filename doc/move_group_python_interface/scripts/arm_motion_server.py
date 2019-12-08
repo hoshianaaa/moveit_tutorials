@@ -9,11 +9,12 @@ import time
 
 robot = moveit_commander.RobotCommander()
 arm = moveit_commander.MoveGroupCommander("interaction_arm")
+motion_list = ["home", "running", "up_bottun_45", "up_bottun_45_2"]
 
 def handle_arm_motion(req):
 
-  motion_list = ["home", "running"]
   global arm
+  global motion_list
 
   m = motion_list[req.number]
   print("move", m)
@@ -23,9 +24,13 @@ def handle_arm_motion(req):
   return 1
 
 def main():
+  global motion_list
+
   rospy.init_node("arm_motion_server")
   s = rospy.Service("arm_motion", ArmMotion, handle_arm_motion)
   print("start arm motion server")
+  print("-- motion list --")
+  print(motion_list)
   rospy.spin()
 
 if __name__ == '__main__':
